@@ -1,5 +1,11 @@
-(define fact
+(define double
   (lambda (x)
+    (* x 2))) 
+
+(define lat?
+  (lambda (l)
     (cond
-     ((zero? x) 1)
-     (else (* #?=x (fact (- x 1)))))))
+     ((null? l) #t)
+     ((atom? (car l)) (lat? (cdr l)))
+     (else #f))))
+
