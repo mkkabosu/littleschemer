@@ -160,3 +160,31 @@
      ((null? tup) 0)
      (else (o+ (car tup) (addtup (cdr tup)))))))
 
+(define x
+  (lambda (n m)
+    (cond
+     ((zero? m) 0)
+     (else (o+ n (x n (sub1 m)))))))
+
+(define tup+
+  (lambda (tup1 tup2)
+    (cond
+     ((null? tup1) tup2)
+     ((null? tup2) tup1)
+     (else 
+      (cons (o+ (car tup1) (car tup2))
+	    (tup+
+	     (cdr tup1) (cdr tup2)))))))
+(define >
+  (lambda (n m)
+    (cond
+     ((zero? n) #f)
+     ((zero? m) #t)
+     (else (> (sub1 n) (sub1 m))))))
+
+(define <
+  (lambda (n m)
+    (cond
+     ((zero? m) #f)
+     ((zero? n) #t)
+     (else (< (sub1 n) (sub1 m))))))
