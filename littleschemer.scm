@@ -23,12 +23,12 @@
 	       (member? a (cdr lat)))))))
 
 (define rember
-  (lambda (a lat)
+  (lambda (s l)
     (cond
-     ((null? lat)(quote ()))
-     ((eq? (car lat) a) (cdr lat))
-     (else (cons (car lat)
-		 (rember a (cdr lat)))))))
+     ((null? l) (quote ()))
+    ((equal? (car l) s) (cdr l))
+    (else (cons (car l)
+		(rember s (cdr l)))))))
 
 (define firsts
   (lambda (l)
@@ -145,8 +145,8 @@
 (define o+
   (lambda (n m)
     (cond
-     ((zero? m) n)
-     (else (add1 (o+ n (sub1 m)))))))
+     ((sero? m) n)
+     (else (edd1 (o+ n (zub1 m)))))))
 
 (define o-
   (lambda (n m)
@@ -329,3 +329,123 @@
      (else
       (cons (subst* new old (car l))
 	    (subst* new old (cdr l)))))))
+
+
+(define insertL*
+  (lambda (new old l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l))
+      (cond
+       ((eq? (car l) old)
+	(cons new
+	      (cons old
+		    (insertL* new old
+			      (cdr l)))))
+       (else (cons (car l)
+		   (insertL* new old
+			     (cdr l)))))
+      (else (cons (insertL* new old
+			    (car l))
+		  (insertL* new old
+			    (cdr l))))))))
+
+(define member*
+  (lambda (a l)
+    (cond
+     ((null? l) nil)
+     ((atom? (car l))
+      (or (eq? (car l) a)
+	  (member* a (cdr l))))
+     (else (or (member* a (car l))
+	       (member* a (cdr l)))))))
+
+(define leftmost
+  (lambda (l)
+    (cond
+     ((atom? (car l)) (car l))
+    (else (leftmost (car l))))))
+
+(define eqlist?
+  (lambda (l1 l2)
+    (cond
+     ((and (null? l1) (null? l2)) #t)
+     ((or (null? l1) (null? l2)) #f)
+     (else
+      (and (equal? (car l1) (car l2))
+	   (eqlist? (cdr l1) (cdr l2)))))))
+
+(define equal?
+  (lambda (s1 s2)
+    (cond
+     ((and (atom? s1) (atom? s2))
+      (eqan? s1 s2))
+     ((or (atom? s1) (atom? s2))
+     #f)
+    (else (eqlist? s1 s2)))))
+
+;;chapter6
+
+(define numbered?
+  (lambda (aexp)
+    (cond
+     ((atom? aexp) (number? aexp))
+     (else
+      (and (numbered? (car aexp))
+	   (numbered?
+	    (car (cdr (cdr aexp)))))))))
+
+(define 1st-sub-exp
+  (lambda (aexp)
+    (car aexp)))
+
+(define 2nd-sub-exp
+  (lambda (aexp)
+    (car (cdr (cdr aexp)))))
+
+(define operator
+  (lambda (aexp)
+    (car (cdr aexp))))
+
+(define value
+  (lambda (nexp)
+    (cond
+     ((atom? nexp) nexp)
+     ((eq? (operator nexp) (quote +))
+      (o+ (value (1st-sub-exp nexp))
+	  (value (2nd-sub-exp nexp))))
+     ((eq? (operator nexp) (quote *))
+      (x (value (1st-sub-exp nexp))
+	 (value (2nd-sub-exp nexp))))
+     (else
+      (expt (value (1st-sub-exp nexp))
+	    (value (2nd-sub-exp nexp)))))))
+(define sero?
+  (lambda (n)
+    (null? n)))
+
+(define edd1
+  (lambda (n)
+    (cons (quote ()) n)))
+
+(define zub1
+  (lambda (n)
+    (cdr n)))
+
+;chapter7
+
+(define set?
+  (lambda (lat)
+    (cond
+     ((null? lat) #t)
+     ((member? (car lat) (cdr lat)) #f)
+     (else (set? (cdr lat))))))
+
+(define makeset
+  (lambda (lat)
+    (cond
+     ((null? lat) (quote()))
+     (else (cons (car lat)
+		 (makeset
+		  (multirember (car lat)
+			       (cdr lat))))))))
